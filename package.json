@@ -1,5 +1,12 @@
 {
   "name": "nodejs-storage-timeline",
   "version": "0.0.1",
-  "main": "./main.js"
+  "main": "./main.js",
+  "dependencies": {
+    "nodeunit": "~0.9.1",
+    "q": "~1.1.2",
+    "moment": "~2.9.0",
+    "int64": "git+https://github.com/broofa/node-int64.git",
+    "async": "~0.9.0"
+  }
 }
