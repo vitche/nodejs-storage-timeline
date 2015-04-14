@@ -1,6 +1,6 @@
 var q = require('q');
 var baseTest = require('./../base-test');
-var storageTimeline = require('../modules/nodejs-storage-timeline');
+var storageTimeline = require('../main');
 exports.tearDown = baseTest.deleteTimeLines;
 exports.testList = function (test) {
     var storage = new storageTimeline.Storage('./files');

@@ -1,6 +1,6 @@
 var q = require('q');
 var baseTest = require('./../base-test');
-var storageTimeline = require('../modules/nodejs-storage-timeline');
+var storageTimeline = require('../main');
 function _createSchema(callback) {
     var storage = new storageTimeline.Storage('./files');
     storage.create('schema-1', function (error) {

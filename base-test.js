@@ -1,5 +1,5 @@
 var q = require('q');
-var storageTimeline = require('./modules/nodejs-storage-timeline');
+var storageTimeline = require('./main');
 exports.deleteTimeLines = function (callback) {
     // Open the storage
     var storage = new storageTimeline.Storage('./files');

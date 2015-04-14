@@ -1,6 +1,6 @@
 var async = require('async');
 var baseTest = require('./../base-test');
-var storageTimeline = require('../modules/nodejs-storage-timeline');
+var storageTimeline = require('../main');
 function testIterations(test, timeLine, names) {
     names.push(undefined);
     timeLine.reset();
