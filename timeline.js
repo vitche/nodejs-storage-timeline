@@ -42,6 +42,7 @@ function _writeNumber(path, value, time, callback) {
     stream.once('open', function (handle) {
         stream.write(buffer);
         stream.end();
+        callback();
     });
 }
 // Represents a time line - a group of time-based events
