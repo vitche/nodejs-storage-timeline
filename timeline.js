@@ -52,7 +52,7 @@ module.exports = function (schema, name) {
     // Current time line name
     this._name = name;
     this._buffer = undefined;
-    this._offset = undefined;
+    this._offset = 0;
     this._getPath = function () {
         var path = schema._storage._path + '/' + schema._name + '/' + this._name;
         return path;
