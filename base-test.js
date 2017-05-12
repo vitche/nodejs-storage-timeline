@@ -1,3 +1,4 @@
+// This cannot be moved to the "tests" folder because it then will be called as a test
 var q = require('q');
 var storageTimeline = require('./main');
 exports.deleteTimeLines = function (callback) {

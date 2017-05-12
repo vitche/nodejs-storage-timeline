@@ -1,5 +1,5 @@
 var q = require('q');
-var baseTest = require('./../base-test');
+var baseTest = require('../base-test');
 var storageTimeline = require('../main');
 function _createSchema(callback) {
     var storage = new storageTimeline.Storage('./files');

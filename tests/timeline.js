@@ -1,13 +1,15 @@
 var async = require('async');
-var baseTest = require('./../base-test');
+var baseTest = require('../base-test');
 var storageTimeline = require('../main');
 function testIterations(test, timeLine, names) {
     names.push(undefined);
     timeLine.reset();
     var i = 0;
     async.eachSeries(names, function (name, callback) {
-        timeLine.nextString(function (error, value) {
-            test.equals(value, names[i], value + ' expected to be ' + names[i]);
+        timeLine.nextString(function (error, item) {
+            if (undefined != item) {
+                test.equals(item.value, names[i], item.value + ' expected to be ' + names[i]);
+            }
             i++;
             callback();
         });

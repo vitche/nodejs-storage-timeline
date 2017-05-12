@@ -85,19 +85,16 @@ module.exports = function (schema, name) {
         var path = this._getPath();
         // Write the value to a buffer
         switch (typeof value) {
-            case 'string':
-            {
+            case 'string': {
                 _writeString(path, value, time, callback);
                 break;
             }
-            case 'number':
-            {
+            case 'number': {
                 _writeNumber(path, value, time, callback);
                 break;
             }
             case 'array':
-            case 'object':
-            {
+            case 'object': {
                 value = JSON.stringify(value);
                 _writeString(path, value, time, callback);
                 break;
@@ -124,7 +121,10 @@ module.exports = function (schema, name) {
             var value = new Buffer(valueSize);
             self._buffer.copy(value, 0, self._offset, self._offset + valueSize);
             self._offset += valueSize;
-            return value;
+            return {
+                time: time,
+                value: value
+            };
         }
 
         if (undefined == this._buffer) {
@@ -152,7 +152,7 @@ module.exports = function (schema, name) {
                 callback();
                 return;
             }
-            item = item.toString();
+            item.value = item.value.toString();
             callback(undefined, item);
         });
     };
@@ -165,7 +165,7 @@ module.exports = function (schema, name) {
                 callback();
                 return;
             }
-            item = new Int64(item).toNumber();
+            item.value = new Int64(item.value).toNumber();
             callback(undefined, item);
         });
     };
