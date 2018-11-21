@@ -140,7 +140,9 @@ module.exports = function (schema, name) {
             });
         } else {
             var item = readItem();
-            callback(undefined, item);
+            setTimeout(function () {
+                callback(undefined, item);
+            }, 0);
         }
     };
     this.nextString = function (callback) {
