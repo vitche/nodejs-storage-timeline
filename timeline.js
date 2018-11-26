@@ -53,7 +53,11 @@ module.exports = function (schema, name) {
     this._name = name;
     this._buffer = undefined;
     this._offset = 0;
-    this._getPath = function () {
+    this._getPath = function (name) {
+        if (name) {
+            var path = schema._storage._path + '/' + schema._name + '/' + name;
+            return path;
+        }
         var path = schema._storage._path + '/' + schema._name + '/' + this._name;
         return path;
     };
@@ -100,6 +104,16 @@ module.exports = function (schema, name) {
                 break;
             }
         }
+    };
+    // Creates a time line copy
+    this.copy = function (name, callback) {
+        fs.copyFile(this._getPath(), this._getPath(name), function (error) {
+            if (error) {
+                callback(error);
+                return;
+            }
+            callback();
+        });
     };
     // Returns one next element from the time line
     this.next = function (callback) {
