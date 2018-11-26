@@ -112,7 +112,25 @@ module.exports = function (schema, name) {
                 callback(error);
                 return;
             }
-            callback();
+            callback(undefined, new module.exports(this._schema, name));
+        });
+    };
+    this.rename = function (name, callback) {
+        fs.renameFile(this._getPath(), this._getPath(name), function (error) {
+            if (error) {
+                callback(error);
+                return;
+            }
+            callback(undefined, new module.exports(this._schema, name));
+        });
+    };
+    this.truncate = function (callback) {
+        fs.truncate(this._getPath(), function (error) {
+            if (error) {
+                callback(error);
+                return;
+            }
+            callback(undefined, this);
         });
     };
     // Returns one next element from the time line
