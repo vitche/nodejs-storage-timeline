@@ -1,15 +1,37 @@
 var fs = require('fs');
 var moment = require('moment');
 var Int64 = require('node-int64');
+
 function _writeInt64(buffer, value, offset) {
     value = new Int64(value).toBuffer();
     value.copy(buffer, offset);
 }
+
 function _readInt64(buffer, offset) {
     var atom = new Buffer(8);
     buffer.copy(atom, 0, offset, offset + 8);
     return new Int64(atom).toNumber();
 }
+
+function _writeBuffer(path, value, time, callback) {
+    var payloadSize = 8 + value.length;
+    var buffer = new Buffer(8 + payloadSize);
+    // Payload size
+    _writeInt64(buffer, payloadSize, 0);
+    // Time stamp
+    _writeInt64(buffer, time, 8);
+    // Buffer contents
+    value.copy(buffer, 16);
+    var stream = fs.createWriteStream(path, {
+        'flags': 'a'
+    });
+    stream.once('open', function (handle) {
+        stream.write(buffer);
+        stream.end();
+        callback();
+    });
+}
+
 function _writeString(path, value, time, callback) {
     var payloadSize = 8 + value.length;
     var buffer = new Buffer(8 + payloadSize);
@@ -28,6 +50,7 @@ function _writeString(path, value, time, callback) {
         callback();
     });
 }
+
 function _writeNumber(path, value, time, callback) {
     var buffer = new Buffer(24);
     // Payload size (2 x 64-bit)
@@ -45,6 +68,7 @@ function _writeNumber(path, value, time, callback) {
         callback();
     });
 }
+
 // Represents a time line - a group of time-based events
 module.exports = function (schema, name) {
     // The schema holding the current time line
@@ -88,7 +112,9 @@ module.exports = function (schema, name) {
         var schema = this._schema;
         var path = this._getPath();
         // Write the value to a buffer
-        switch (typeof value) {
+        if (value instanceof Buffer) {
+            _writeBuffer(path, value, time, callback);
+        } else switch (typeof value) {
             case 'string': {
                 _writeString(path, value, time, callback);
                 break;
@@ -107,30 +133,33 @@ module.exports = function (schema, name) {
     };
     // Creates a time line copy
     this.copy = function (name, callback) {
+        var self = this;
         fs.copyFile(this._getPath(), this._getPath(name), function (error) {
             if (error) {
                 callback(error);
                 return;
             }
-            callback(undefined, new module.exports(this._schema, name));
+            callback(undefined, new module.exports(self._schema, name));
         });
     };
     this.rename = function (name, callback) {
+        var self = this;
         fs.renameFile(this._getPath(), this._getPath(name), function (error) {
             if (error) {
                 callback(error);
                 return;
             }
-            callback(undefined, new module.exports(this._schema, name));
+            callback(undefined, new module.exports(self._schema, name));
         });
     };
     this.truncate = function (callback) {
+        var self = this;
         fs.truncate(this._getPath(), function (error) {
             if (error) {
                 callback(error);
                 return;
             }
-            callback(undefined, this);
+            callback(undefined, self);
         });
     };
     // Returns one next element from the time line
