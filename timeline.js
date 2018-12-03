@@ -144,7 +144,7 @@ module.exports = function (schema, name) {
     };
     this.rename = function (name, callback) {
         var self = this;
-        fs.renameFile(this._getPath(), this._getPath(name), function (error) {
+        fs.rename(this._getPath(), this._getPath(name), function (error) {
             if (error) {
                 callback(error);
                 return;
@@ -160,6 +160,11 @@ module.exports = function (schema, name) {
                 return;
             }
             callback(undefined, self);
+        });
+    };
+    this.unlink = function (callback) {
+        fs.unlink(this._getPath(), function (error) {
+            callback(error);
         });
     };
     // Returns one next element from the time line
