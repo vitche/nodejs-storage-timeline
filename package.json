@@ -1,6 +1,6 @@
 {
   "name": "nodejs-storage-timeline",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "./main.js",
   "dependencies": {
     "nodeunit": "~0.9.1",

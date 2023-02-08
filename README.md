@@ -1,3 +1,4 @@
-# nodejs-storage-timeline
-A Node.js implementation of the Storage.Timeline NoSQL database.
+# Node.js Storage.Timeline ~~NoSQL~~ database implementation
+More documentation available at: 
 
+https://github.com/vitche/documentation-storage-timeline
