@@ -13,15 +13,7 @@ function _readInt64(buffer, offset) {
     return new Int64(atom).toNumber();
 }
 
-function _writeBuffer(path, value, time, callback) {
-    const payloadSize = 8 + value.length;
-    const buffer = new Buffer(8 + payloadSize);
-    // Payload size
-    _writeInt64(buffer, payloadSize, 0);
-    // Time stamp
-    _writeInt64(buffer, time, 8);
-    // Buffer contents
-    value.copy(buffer, 16);
+function _flushBuffer(path, buffer, callback) {
     const stream = fs.createWriteStream(path, {
         'flags': 'a'
     });
@@ -34,6 +26,18 @@ function _writeBuffer(path, value, time, callback) {
         stream.end();
         callback(error);
     });
+}
+
+function _writeBuffer(path, value, time, callback) {
+    const payloadSize = 8 + value.length;
+    const buffer = new Buffer(8 + payloadSize);
+    // Payload size
+    _writeInt64(buffer, payloadSize, 0);
+    // Time stamp
+    _writeInt64(buffer, time, 8);
+    // Buffer contents
+    value.copy(buffer, 16);
+    _flushBuffer(path, buffer, callback);
 }
 
 function _writeString(path, value, time, callback) {
@@ -45,18 +49,7 @@ function _writeString(path, value, time, callback) {
     _writeInt64(buffer, time, 8);
     // String value
     Buffer(value).copy(buffer, 16);
-    const stream = fs.createWriteStream(path, {
-        'flags': 'a'
-    });
-    stream.once('open', function (handle) {
-        stream.write(buffer);
-        stream.end();
-        callback();
-    });
-    stream.once('error', (error) => {
-        stream.end();
-        callback(error);
-    });
+    _flushBuffer(path, buffer, callback);
 }
 
 function _writeNumber(path, value, time, callback) {
@@ -67,18 +60,7 @@ function _writeNumber(path, value, time, callback) {
     _writeInt64(buffer, time, 8);
     // 8-byte (64-bit) numeric value
     _writeInt64(buffer, value, 16);
-    const stream = fs.createWriteStream(path, {
-        'flags': 'a'
-    });
-    stream.once('open', function (handle) {
-        stream.write(buffer);
-        stream.end();
-        callback();
-    });
-    stream.once('error', (error) => {
-        stream.end();
-        callback(error);
-    });
+    _flushBuffer(path, buffer, callback);
 }
 
 // Represents a time-line - a group of time-based events
