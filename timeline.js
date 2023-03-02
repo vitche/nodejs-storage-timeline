@@ -17,7 +17,7 @@ function _flushBuffer(path, buffer, callback) {
     const stream = fs.createWriteStream(path, {
         'flags': 'a'
     });
-    stream.once('open', function (handle) {
+    stream.once('open', function () {
         stream.write(buffer);
         stream.end();
         callback();
@@ -75,11 +75,9 @@ module.exports = function (schema, name) {
     this._offset = 0;
     this._getPath = function (name) {
         if (name) {
-            const path = schema._storage._path + '/' + schema._name + '/' + name;
-            return path;
+            return schema._storage._path + '/' + schema._name + '/' + name;
         }
-        const path = schema._storage._path + '/' + schema._name + '/' + this._name;
-        return path;
+        return schema._storage._path + '/' + schema._name + '/' + this._name;
     };
 
     // Adds a time-line event specified by:
@@ -88,8 +86,8 @@ module.exports = function (schema, name) {
     // - the given time and the given value.
     this.add = function (argument1, argument2, argument3) {
         let time = undefined;
-        let value = undefined;
-        let callback = undefined;
+        let value;
+        let callback;
         // Check whether the second argument was specified
         if (undefined === argument3) {
             value = argument1;
@@ -106,7 +104,6 @@ module.exports = function (schema, name) {
             time = stamp.unix() * 1000 + stamp.millisecond();
         }
         // A path to the time-line file
-        const schema = this._schema;
         const path = this._getPath();
         // Write the value to a buffer
         if (value instanceof Buffer) {
