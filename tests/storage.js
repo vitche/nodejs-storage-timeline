@@ -29,7 +29,7 @@ exports.testList = function (test) {
             test.equal(schemas.length, 7, 'Expected 7 schemas');
             test.done();
         });
-    }).fail(function (error) {
+    }).catch(function (error) {
         test.fail(error);
         test.done();
     }).done();
