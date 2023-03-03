@@ -125,7 +125,12 @@ module.exports = function (schema, name) {
             }
         }
     };
-    // Creates a time-line copy
+    /**
+     * Creates a time-line copy.
+     * When the destinations already exists, the old version is overwritten.
+     * @param name Destination time-line name.
+     * @param callback
+     */
     this.copy = function (name, callback) {
         const self = this;
         fs.copyFile(this._getPath(), this._getPath(name), function (error) {
@@ -135,6 +140,29 @@ module.exports = function (schema, name) {
             }
             callback(undefined, new module.exports(self._schema, name));
         });
+    };
+    /**
+     * Concatenates the current time-line to a destination time-line.
+     * @param name Destination time-line name.
+     * @param callback
+     */
+    this.concatenate = function (name, callback) {
+
+        const self = this;
+
+        // Open streams
+        const readStream = fs.createReadStream(this._getPath());
+        const writeStream = fs.createWriteStream(this._getPath(name), { flags: 'a' });
+
+        // Configure stream event handlers
+        readStream.on('end', () => {
+            callback(undefined, new module.exports(self._schema, name));
+        });
+        readStream.on('error', callback);
+        writeStream.on('error', callback);
+
+        // Pipe from the source to the destination
+        readStream.pipe(writeStream);
     };
     this.rename = function (name, callback) {
         const self = this;
